@@ -54,30 +54,26 @@ class Scan extends Component {
       this.state.web3.eth.getBalance(address, (err, balance) => {
         let obj = {
           eth: this.state.web3.fromWei(balance, "ether"),
-          tokens: []
+          tokens: {}
         };
         
         this.setState({
             message: "Looking for wallet "+ address +", ETH balance " + obj.eth
         });
 
-        Utils.getTokens().default.forEach(async t => {
-          
-             
-       
-
+        Utils.getTokens().default.forEach(async t => { 
           const instance = token.at(t.address);
-          const name = await instance.name.call();
-          const decimals = await instance.decimals.call();
-
-          const balance = await instance.balanceOf.call(address);
+          const name = await instance.name.call();          
+          const decimals = await instance.decimals.call();          
+          let balance = await instance.balanceOf.call(address);
+         
           const tkn = {
             token: name,
             balance: balance.toNumber() / Math.pow(10, parseInt(decimals, 10)),
             decimals: decimals
           };
 
-          obj.tokens.push(tkn);
+          obj.tokens[t.name] = tkn;
 
           const update_balance = this.state.balances;
           update_balance[address] = obj;

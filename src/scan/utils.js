@@ -15,21 +15,32 @@ class Utils {
     Utils.getTokens().default.forEach(tkn => {
       header.push(tkn.name);
     });
-    return header.join();
+    return header
   }
 
   static toCSV(data) {
     const output = [];
+    const d = Utils.getCSVHeader();
+    const tokens = d
+    output.push(d.join());
+    tokens.shift()
+    tokens.shift()
+
     Object.keys(data).forEach( (k, i) => {
       const wallet = data[k];
       // Adding CSV header
-      if (i === 0) {
-        output.push(Utils.getCSVHeader());
-      }
+      
       const line = [k, wallet.eth];
-      wallet["tokens"].forEach(token => {
-        line.push(token["balance"]);
-      });
+      const tkns = wallet["tokens"];
+      console.log(tkns);
+      console.log(tokens)
+      tokens.forEach(tkn => {
+        console.log( tkn, tkns[tkn]);
+        line.push(tkns[tkn]['balance'])
+      })
+      // wallet["tokens"].forEach(token => {
+      //   line.push(token["balance"]);
+      // });
       output.push(line.join());
     });
     return output.join("\n");
